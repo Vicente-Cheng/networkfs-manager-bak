@@ -1,0 +1,96 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    {}
+  name: networkfilesystems.harvesterhci.io
+spec:
+  group: harvesterhci.io
+  names:
+    kind: NetworkFilesystem
+    listKind: NetworkFilesystemList
+    plural: networkfilesystems
+    shortNames:
+    - netfilesystem
+    - netfilesystems
+    singular: networkfilesystem
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .spec.networkFSName
+      name: Name
+      type: string
+    - jsonPath: .status.endpoint
+      name: Endpoint
+      type: string
+    - jsonPath: .status.state
+      name: State
+      type: string
+    - jsonPath: .status.type
+      name: Type
+      type: string
+    name: v1beta1
+    schema:
+      openAPIV3Schema:
+        properties:
+          apiVersion:
+            description: |-
+              APIVersion defines the versioned schema of this representation of an object.
+              Servers should convert recognized schemas to the latest internal value, and
+              may reject unrecognized values.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+            type: string
+          kind:
+            description: |-
+              Kind is a string value representing the REST resource this object represents.
+              Servers may infer this from the endpoint the client submits requests to.
+              Cannot be updated.
+              In CamelCase.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+            type: string
+          metadata:
+            type: object
+          spec:
+            properties:
+              networkFSName:
+                description: name of the networkFS to which the endpoint is exported
+                type: string
+            required:
+            - networkFSName
+            type: object
+          status:
+            properties:
+              endpoint:
+                description: the current Endpoint of the networkFS
+                type: string
+              state:
+                description: the current state of the networkFS endpoint, options
+                  are "Ready", "NotReady", or "Unknown"
+                enum:
+                - Ready
+                - NotReady
+                - Unknown
+                type: string
+              status:
+                type: string
+              type:
+                description: the type of the networkFS endpoint, options are "NFS",
+                  or "Unknown"
+                enum:
+                - NFS
+                - Unknown
+                type: string
+            required:
+            - endpoint
+            - state
+            - type
+            type: object
+        required:
+        - metadata
+        - spec
+        - status
+        type: object
+    served: true
+    storage: true
+    subresources: {}
